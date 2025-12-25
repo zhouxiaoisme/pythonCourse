@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 海象运算符 (:=) 完全教学</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3772FF',
+                        secondary: '#DFE7FF',
+                        dark: '#2D3748',
+                        light: '#F7FAFC',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['Consolas', 'Monaco', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .aspect-16-9 {
+                aspect-ratio: 16/9;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+    <style>
+        /* 滚动条优化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3772FF;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        /* 代码块样式增强 */
+        pre[class*="language-"] {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+        /* 响应式适配16:9 */
+        @media (min-aspect-ratio: 16/9) {
+            .container {
+                max-width: 1280px;
+                padding: 0 2rem;
+            }
+        }
+        @media (max-aspect-ratio: 16/9) {
+            .container {
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light text-dark font-sans">
+    <!-- 顶部导航 -->
+    <header class="bg-primary text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto py-4 px-6 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-shadow">Python 海象运算符 (:=) 教学</h1>
+            <div class="flex items-center gap-4">
+                <span class="hidden md:inline-block"><i class="fa fa-python"></i> Python 3.8+</span>
+                <span><i class="fa fa-desktop"></i> 16:9 适配</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto py-8 px-4">
+        <!-- 1. 海象运算符核心介绍 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b-2 border-primary pb-2">
+                <i class="fa fa-info-circle mr-2"></i> 核心概念：什么是海象运算符？
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">定义与本质</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                            <span><code class="bg-secondary px-1 rounded">:=</code> 是 Python 3.8 引入的<strong>赋值表达式</strong>运算符</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                            <span>核心：<strong>先赋值，再返回赋值结果</strong>（区别于普通赋值 <code class="bg-secondary px-1 rounded">=</code> 是语句）</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                            <span>别名：海象运算符（因形状类似海象的眼睛和长牙）</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">与普通赋值的区别</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-primary/10">
+                                    <th class="border border-gray-300 p-3 text-left">特性</th>
+                                    <th class="border border-gray-300 p-3 text-left">海象运算符 <code>:=</code></th>
+                                    <th class="border border-gray-300 p-3 text-left">普通赋值 <code>=</code></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border border-gray-300 p-3">类型</td>
+                                    <td class="border border-gray-300 p-3">表达式（有返回值）</td>
+                                    <td class="border border-gray-300 p-3">语句（无返回值）</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border border-gray-300 p-3">嵌入场景</td>
+                                    <td class="border border-gray-300 p-3">可嵌入 if/while/推导式</td>
+                                    <td class="border border-gray-300 p-3">不可嵌入表达式</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-gray-300 p-3">使用场景</td>
+                                    <td class="border border-gray-300 p-3">赋值后立即使用</td>
+                                    <td class="border border-gray-300 p-3">单独赋值</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 设计初衷 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b-2 border-primary pb-2">
+                <i class="fa fa-lightbulb-o mr-2"></i> 设计初衷：为什么引入海象运算符？
+            </h2>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <p class="text-lg mb-4">核心初衷：<strong>简化「先赋值、后使用」的冗余逻辑</strong>，减少重复计算、精简代码结构</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-semibold mb-2 text-primary">痛点1：重复计算/调用</h4>
+                        <pre class="language-python"><code># 传统：重复计算 len(s)
+if len(s) > 10:
+    print(f"长度：{len(s)}")
+
+# 海象：一次计算，复用结果
+if (length := len(s)) > 10:
+    print(f"长度：{length}")</code></pre>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2 text-primary">痛点2：赋值无法嵌入表达式</h4>
+                        <pre class="language-python"><code># 传统：while循环需重复赋值
+line = input("输入：")
+while line != "quit":
+    print(line)
+    line = input("输入：")
+
+# 海象：赋值+判断一体化
+while (line := input("输入：")) != "quit":
+    print(line)</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 短路求值+海象运算符示例 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b-2 border-primary pb-2">
+                <i class="fa fa-code mr-2"></i> 实战：短路求值 + 海象运算符
+            </h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-4">核心示例解析</h3>
+                <div class="mb-6">
+                    <pre class="language-python"><code>m = 3
+n = 0
+
+# and短路：左侧True → 执行右侧赋值
+res1 = (m < 5) and (n := m + 2)
+# or短路：左侧False → 执行右侧赋值
+res2 = (m > 10) or (n := m - 1)
+
+print(f"res1={res1}, res2={res2}, n={n}")
+# 输出：res1=True, res2=True, n=2</code></pre>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mt-8">
+                    <div class="bg-secondary/30 rounded-lg p-4">
+                        <h4 class="font-semibold mb-3">and 短路规则</h4>
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>左侧表达式为 <code>False</code> → 直接返回False，右侧不执行</li>
+                            <li>左侧表达式为 <code>True</code> → 执行右侧表达式，返回右侧结果</li>
+                            <li>示例中：<code>m<5=True</code> → 执行 <code>n:=3+2=5</code></li>
+                        </ol>
+                    </div>
+                    <div class="bg-secondary/30 rounded-lg p-4">
+                        <h4 class="font-semibold mb-3">or 短路规则</h4>
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>左侧表达式为 <code>True</code> → 直接返回True，右侧不执行</li>
+                            <li>左侧表达式为 <code>False</code> → 执行右侧表达式，返回右侧结果</li>
+                            <li>示例中：<code>m>10=False</code> → 执行 <code>n:=3-1=2</code></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- 交互演示区 -->
+                <div class="mt-8 border-t border-gray-200 pt-6">
+                    <h4 class="font-semibold mb-4">🔍 交互演示：修改参数看结果</h4>
+                    <div class="flex flex-col md:flex-row gap-4 mb-4">
+                        <div class="flex-1">
+                            <label class="block mb-2 font-medium">m 的值：</label>
+                            <input type="number" id="m-input" value="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block mb-2 font-medium">n 的初始值：</label>
+                            <input type="number" id="n-input" value="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                    </div>
+                    <button id="run-btn" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                        <i class="fa fa-play mr-2"></i> 运行代码
+                    </button>
+                    <div id="demo-result" class="mt-4 p-4 bg-gray-50 rounded-lg font-mono text-lg"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 最佳实践与注意事项 -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6 border-b-2 border-primary pb-2">
+                <i class="fa fa-check-square-o mr-2"></i> 最佳实践与注意事项
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-primary">✅ 推荐使用场景</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-star text-yellow-500 mt-1 mr-2"></i>
+                            <span>while循环：赋值+判断一体化（如读取输入/文件）</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-star text-yellow-500 mt-1 mr-2"></i>
+                            <span>条件判断：避免重复计算/函数调用</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-star text-yellow-500 mt-1 mr-2"></i>
+                            <span>列表/字典推导式：赋值后过滤</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-star text-yellow-500 mt-1 mr-2"></i>
+                            <span>精简临时变量：仅赋值后立即使用的场景</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-red-500">❌ 避免使用场景</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-times-circle text-red-500 mt-1 mr-2"></i>
+                            <span>单独赋值：<code>(n := 10)</code> 不如 <code>n = 10</code> 清晰</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-times-circle text-red-500 mt-1 mr-2"></i>
+                            <span>复杂嵌套：过度使用会降低代码可读性</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-times-circle text-red-500 mt-1 mr-2"></i>
+                            <span>低版本Python：3.8以下不支持，会报语法错误</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-times-circle text-red-500 mt-1 mr-2"></i>
+                            <span>无括号歧义：<code>if n := len(s) > 10</code> 易误解</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 总结 -->
+        <section>
+            <h2 class="text-2xl font-bold mb-6 border-b-2 border-primary pb-2">
+                <i class="fa fa-bookmark mr-2"></i> 核心总结
+            </h2>
+            <div class="bg-primary/5 rounded-lg shadow-md p-6">
+                <div class="flex flex-col md:flex-row items-center justify-center text-center md:text-left gap-4">
+                    <i class="fa fa-quote-left text-4xl text-primary/50"></i>
+                    <p class="text-lg">
+                        海象运算符不是为了炫技，而是<strong>优化「赋值+使用」的表达效率</strong>：<br>
+                        减少重复计算 → 提升性能；精简冗余代码 → 优化结构；让逻辑更内聚 → 增强可读性。<br>
+                        记住核心原则：<strong>仅在「赋值后立即使用」的场景下使用</strong>，优先保证代码可读性。
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>Python 海象运算符教学课件 | 适配16:9宽屏 | Python 3.8+</p>
+            <p class="mt-2 text-gray-400">© 2025 Python 教学资源</p>
+        </div>
+    </footer>
+
+    <!-- 交互逻辑脚本 -->
+    <script>
+        // 运行代码演示逻辑
+        document.getElementById('run-btn').addEventListener('click', function() {
+            const m = parseInt(document.getElementById('m-input').value) || 0;
+            let n = parseInt(document.getElementById('n-input').value) || 0;
+            
+            // 模拟代码执行
+            const res1 = (m < 5) && (n = m + 2); // JS中用=模拟:=
+            const res2 = (m > 10) || (n = m - 1);
+            
+            // 显示结果
+            const resultEl = document.getElementById('demo-result');
+            resultEl.textContent = `res1=${res1}, res2=${res2}, n=${n}`;
+            resultEl.classList.add('bg-green-50', 'text-green-700');
+            
+            // 重置样式动画
+            setTimeout(() => {
+                resultEl.classList.remove('bg-green-50', 'text-green-700');
+            }, 2000);
+        });
+
+        // 代码高亮
+        Prism.highlightAll();
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
